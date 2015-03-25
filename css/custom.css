@@ -1,0 +1,31 @@
+.table th.col-4,
+.table td.col-4 {
+	text-align: center;
+	width:25%;
+}
+.table tbody > tr > td {
+	vertical-align: middle;
+}
+.candidate table,
+.global table{
+	margin-bottom: 10px;
+}
+button.add-candidate{
+	margin: 18px 0 0 0;
+}
+button.reinit-form{
+	margin: 5px 0 0 0;
+}
+button.submit{
+	margin: 20px 0;
+}
+#chart1-legend,
+#chart1-legend {
+	padding-top: 25px;
+}
+.doughnut-legend li span{
+	display: inline-block;
+	width: 10px;
+	height: 10px;
+	margin-right: 5px;
+}

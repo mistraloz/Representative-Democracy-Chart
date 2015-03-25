@@ -1,4 +1,4 @@
-# Represantative Democracy Chart
+# Representative Democracy Chart
 
 Cet outil a pour but de présenter correctement les résultats électoraux en démocratie représentative. 
 
