@@ -90,6 +90,7 @@ $(function() {
 			$('form .candidate button.reinit-form').hide();
 		}
 		$(".alert-unsetvalue").hide();
+		$(".alert-candidate-not100").hide();
 	};
 	$('form .candidate').on('click', 'button.reinit-form', formReinit);
 	formReinitIsDisplayed();
@@ -187,28 +188,33 @@ $(function() {
 			return false;
 		}
 		var candidates = new Array();
-		tableCandidate.find('tr[class^="candidate_"]').each(function() {
-			var cvoice, cregistered, cexpress;
+		tableCandidate.find('tr[class^="candidate_"]').each(function(index, element) {
+			var cvoice, cregistered, cexpress, cname;
 			cvoice = $(this).find('.voice').val();
-			if(cvoice || $(this).find('.name').val()) {
-				cregistered = $(this).find('.registered').val();
-				cexpress = $(this).find('.express').val();
-				if(cexpress) {
-					cvoice = (cexpress * global.express.number / 100);
-					cregistered = (cvoice / global.registered.number * 100);
-				} else if(cvoice) {
-					cregistered = (cvoice / global.registered.number * 100);
-					cexpress = (cvoice / global.express.number * 100);
-				} else if(cregistered) {
-					cvoice = (cregistered * global.registered.number / 100);
-					cexpress = (cvoice / global.express.number * 100);
-				} else {
+			cregistered = $(this).find('.registered').val();
+			cexpress = $(this).find('.express').val();
+			cname = $(this).find('.name').val();
+			if(cexpress) {
+				cvoice = (cexpress * global.express.number / 100);
+				cregistered = (cvoice / global.registered.number * 100);
+			} else if(cvoice) {
+				cregistered = (cvoice / global.registered.number * 100);
+				cexpress = (cvoice / global.express.number * 100);
+			} else if(cregistered) {
+				cvoice = (cregistered * global.registered.number / 100);
+				cexpress = (cvoice / global.express.number * 100);
+			} 
+			if(cexpress || cname) {
+				if(!cname) {
+					cname = 'C' + (index+1);
+				}
+				if (!cexpress) {
 					inputMark($(this).find('.express'), 'error');
 					hasError = true;
 					return;
 				}
 				candidates.push({
-					name : $(this).find('.name').val(),
+					name : cname,
 					voice : Math.floor(cvoice),
 					registered : Math.round(cregistered * 100) / 100,
 					express : Math.round($(this).find('.express').val() * 100) / 100,
@@ -237,30 +243,35 @@ $(function() {
 		}
 
 		// Lance le graphique
+		var displayNbr = ($('form .global table .number.registered').val() > 0); 
 		var chart1Data = new Array();
 		var chart2Data = new Array();
-		var item;
+		var item, numberAdd;
 		item = {
 			value: global.voteNull.number,
 			color:"#460303",
 			highlight: "#360000",
-			label: "Votes nuls (" + (Math.round(global.voteNull.number / global.registered.number * 100 * 100) / 100) + "%)"
+			label: "Votes nuls (" + (Math.round(global.voteNull.number / global.registered.number * 100 * 100) / 100) + "%" 
+				+ (displayNbr?' - ' + global.voteNull.number:'') + ")"
 		};
 		chart1Data.push(item);
 		item = $.extend({}, item);
 		item.value = 0;
-		item.label = "Votes nuls (" + global.voteNull.percentage + "%)";
+		item.label = "Votes nuls (" + global.voteNull.percentage + "%" 
+				+ (displayNbr?' - ' + global.voteNull.number:'') + ")";
 		chart2Data.push(item);
 		item = {
 			value: global.blank.number,
 			color:"#D3C6C6",
 			highlight: "#F9D5D5",
-			label: "Votes blancs (" + (Math.round(global.blank.number / global.registered.number * 100 * 100) / 100) + "%)"
+			label: "Votes blancs (" + (Math.round(global.blank.number / global.registered.number * 100 * 100) / 100) + "%" 
+				+ (displayNbr?' - ' + global.blank.number:'') + ")"
 		};
 		chart1Data.push(item);
 		item = $.extend({}, item);
 		item.value = 0;
-		item.label = "Votes blancs (" + global.blank.percentage + "%)";
+		item.label = "Votes blancs (" + global.blank.percentage + "%" 
+				+ (displayNbr?' - ' + global.blank.number:'') + ")";
 		chart2Data.push(item);
 		var sommeCandidate = 0;
 		$.each(candidates, function(key, candidate) {
@@ -269,14 +280,17 @@ $(function() {
 				value: candidate.voice,
 				color: colors[key][0],
 				highlight: colors[key][1],
-				label: candidate.name + " (" + candidate.registered + "%) " + candidate.comment
+				label: candidate.name + " (" + candidate.registered + "%" 
+				+ (displayNbr?' - ' + candidate.voice:'') + ") " + candidate.comment
 			};
 			chart1Data.push(item);
 			item = $.extend({}, item);
-			item.label = candidate.name + " (" + candidate.express + "%) " + candidate.comment;
+			item.label = candidate.name + " (" + candidate.express + "%" 
+				+ (displayNbr?' - ' + candidate.voice:'') + ") " + candidate.comment;
 			chart2Data.push(item);
 		});
 		if(sommeCandidate<98 || sommeCandidate>102) {
+			console.log(sommeCandidate);
 			$(".alert-candidate-not100").show();
 			return false;
 		}
@@ -284,7 +298,8 @@ $(function() {
 			value: global.abstention.number,
 			color:"#586969",
 			highlight: "#777F7F",
-			label: "Abstention (" + global.abstention.percentage + "%)"
+			label: "Abstention (" + global.abstention.percentage + "%" 
+				+ (displayNbr?' - ' + global.abstention.number:'') + ")"
 		};
 		chart1Data.push(item);
 		item = $.extend({}, item);
@@ -298,6 +313,13 @@ $(function() {
 			showScale: true,
 
 		};
+		var title = $('#title').val();
+		if(title) {
+			$('h2.title-election').html(title);
+			$('h2.title-election').show();
+		} else {
+			$('h2.title-election').hide();
+		}
 		if(chart1) chart1.destroy();
 		if(chart2) chart2.destroy();
 		$('#chart1-legend').html('');
@@ -316,4 +338,9 @@ $(function() {
 	$('form').on('change', 'input', inputMarkResetFromEvent);
 	$('[data-toggle="tooltip"]').tooltip();
 	candidateCount();
+
+
+	if (top.location != self.document.location) {
+		$('h1').remove();
+	}
 });

@@ -16,7 +16,7 @@
 </head>
 <body>
 <div class="container">
-  <h1>Quel est le réel soutien des citoyens </h1>
+  <h1>Résultats électoraux (outil de calcul)</h1>
   <p>Cet outil a pour but de présenter les chiffres des résultats électoraux sous un angle nouveau. Au lieu de faire figurer les résultats uniquement en fonction des votes exprimés (c'est à dire les citoyens qui ont voté pour un des candidats proposé - hors vote blanc ou nul), nous faisons figurer ici les résultats par rapport à l'ensemble du corps électoral (les citoyens inscrits sur les listes pour pouvoir voter).</p>
   <p>L'objectif est :</p>
   <ul>
@@ -33,18 +33,22 @@
       </div>
       <table class="table table-bordered table-hover table-condensed">
         <tr>
-          <th><label class="control-label" for="number-registered">Inscrits</label></th>
-          <th><label class="control-label" for="number-abstention">Abstention (%)</label></th>
-          <th><label class="control-label" for="number-blank">Votes blancs (%)</label></th>
-          <th><label class="control-label" for="number-voteNull">Votes nuls (%)</label></th>
+          <th class="col-4"><label class="form-label" for="title">Nom de l'élection</label></th>
+          <td colspan="3"><input class="form-control" placeholder="Facultatif" id="title" /></td>
         </tr>
         <tr>
-          <td class="col-4"><input class="number registered form-control" placeholder="Nbr d'inscrits (facultatif)" type="number" id="number-registered" data-toggle="tooltip" data-placement="top" title="Le nombre de citoyens pouvants voter sur la circonscription" /></td>
-          <td class="col-4"><input class="percentage abstention form-control" placeholder="% d'abstention" type="number" step="0.01" min="0" max="100" id="number-abstention" data-toggle="tooltip" data-placement="top" title="Le pourcentage de l'abstention" /></td>
-          <td class="col-4"><input class="percentage blank form-control" placeholder="% de blancs" type="number" step="0.01" min="0" max="100" id="number-blank" data-toggle="tooltip" data-placement="top" title="Le pourcentage du vote blanc" /></td>
-          <td class="col-4"><input class="percentage voteNull form-control" placeholder="% de nuls" type="number" step="0.01" min="0" max="100" id="number-voteNull" data-toggle="tooltip" data-placement="top" title="Le pourcentage du vote nul" /></td>
+          <th class="col-4"><label class="control-label" for="number-registered">Inscrits</label></th>
+          <th class="col-4"><label class="control-label" for="number-abstention">Abstention (%)</label></th>
+          <th class="col-4"><label class="control-label" for="number-blank">Votes blancs (%)</label></th>
+          <th class="col-4"><label class="control-label" for="number-voteNull">Votes nuls (%)</label></th>
+        </tr>
+        <tr>
+          <td><input class="number registered form-control" placeholder="Nbr d'inscrits (facultatif)" type="number" id="number-registered" data-toggle="tooltip" data-placement="top" title="Le nombre de citoyens pouvants voter sur la circonscription" /></td>
+          <td><input class="percentage abstention form-control" placeholder="% d'abstention" type="number" step="0.01" min="0" max="100" id="number-abstention" data-toggle="tooltip" data-placement="top" title="Le pourcentage de l'abstention" required /></td>
+          <td><input class="percentage blank form-control" placeholder="% de blancs" type="number" step="0.01" min="0" max="100" id="number-blank" data-toggle="tooltip" data-placement="top" title="Le pourcentage du vote blanc" required /></td>
+          <td><input class="percentage voteNull form-control" placeholder="% de nuls" type="number" step="0.01" min="0" max="100" id="number-voteNull" data-toggle="tooltip" data-placement="top" title="Le pourcentage du vote nul" required /></td>
           
-          <input class="number abstention form-control hidden" placeholder="Nbr d'abstentionistes" readonly="readoncly" />
+          <input class="number abstention form-control hidden" placeholder="Nbr d'abstentionistes" readonly="readonly" />
           <input class="number blank form-control hidden" placeholder="Nbr de votes blancs" readonly="readonly" />
           <input class="number voteNull form-control hidden" placeholder="Nbr de votes nuls" readonly="readonly" />
           <input class="number express form-control hidden" placeholder="Nbr de votes exprimés" readonly="readonly" />
@@ -141,24 +145,25 @@
       <div class="modal-content">
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal" aria-label="Fermer"><span aria-hidden="true">&times;</span></button>
-          <h4 class="modal-title" id="modalChart">Présentation des résultats</h4>
+          <p class="modal-title" id="modalChart">Présentation des résultats</p>
         </div>
         <div class="modal-body">
+          <h2 class="title-election"></h4>
           <h3>Résultats classiques</h3>
           <div class="row">
             <div class="col-md-5"><canvas id="chart2-area" /></canvas></div>
-            <div class="col-md-5" id="chart2-legend"></div>
+            <div class="col-md-7" id="chart2-legend"></div>
           </div>
           <h3>Résultats réels</h3>
           <div class="row">
             <div class="col-md-5"><canvas id="chart1-area" /></canvas></div>
-            <div class="col-md-5" id="chart1-legend"></div>
+            <div class="col-md-7" id="chart1-legend"></div>
           </div>
-          <h3>Télécharger</h3>
-          <p><a href='#' onclick='window.open(chart2.toBase64Image());' class='btn btn-info btn-sm'>Image classiques</a> <a href='#' onclick='window.open(chart1.toBase64Image());' class='btn btn-info btn-sm'>Image réels</a></p>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+          <a href='#' onclick='window.open(chart2.toBase64Image());' class='btn btn-info btn-sm'>Télécharger graph classiques</a>
+          <a href='#' onclick='window.open(chart1.toBase64Image());' class='btn btn-info btn-sm'>Télécharger graph réels</a>
+          <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Fermer</button>
         </div>
       </div>
     </div>
